@@ -2,7 +2,6 @@
 
 from flask import Flask, jsonify
 import flask_login
-from google.appengine.ext import ndb
 
 import helper
 
@@ -16,20 +15,22 @@ app.login_manager.init_app(app)
 app.login_manager.login_view = 'login'
 
 
-class Account(ndb.Model, flask_login.UserMixin):
-    email = ndb.StringProperty()
-    is_active = ndb.BooleanProperty(default=True)
+class Account(flask_login.UserMixin):
+
+    def __init__(self, email):
+        self.email = email
 
     def get_id(self):
-        return self.key.id()
+        return self.email
 
 user = Account(email='me@example.com')
-user.put()
+
+accounts_by_email = {user.email: user}
 
 
 @app.login_manager.user_loader
-def load_user(user_id):
-    return Account.get_by_id(user_id)
+def load_user(email):
+    return accounts_by_email.get(email)
 
 
 @app.route('/')

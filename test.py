@@ -6,13 +6,6 @@
 #
 
 import mock
-from google.appengine.ext import testbed
-
-_testbed = testbed.Testbed()
-_testbed.activate()
-_testbed.init_datastore_v3_stub()
-_testbed.init_memcache_stub()
-
 import main
 from flask_testing import TestCase
 
