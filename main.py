@@ -8,14 +8,20 @@ import helper
 
 app = Flask('application')
 
+app.config['SECRET_KEY'] = 'secret stuff'
+
 # Login Manager
 app.login_manager = flask_login.LoginManager()
 app.login_manager.init_app(app)
 app.login_manager.login_view = 'login'
 
 
-class Account(ndb.Model):
+class Account(ndb.Model, flask_login.UserMixin):
     email = ndb.StringProperty()
+    is_active = ndb.BooleanProperty(default=True)
+
+    def get_id(self):
+        return self.key.id()
 
 user = Account(email='me@example.com')
 user.put()
